@@ -13,7 +13,7 @@ import { CellActionStatus } from "./cell-action/CellActionStatus";
 export const columns = ({
   mutate,
 }: {
-  mutate: Function;
+  mutate: () => void;
 }): ColumnDef<Brands>[] => [
   {
     id: "select",

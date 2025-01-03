@@ -1,8 +1,6 @@
 "use server";
 import { auth } from "@clerk/nextjs/server";
 import axios from "axios";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 export const getBrands = async () => {
   try {

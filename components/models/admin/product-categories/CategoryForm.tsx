@@ -11,7 +11,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { ToastAction } from "@/components/ui/toast";
 import { toast } from "@/hooks/use-toast";
@@ -30,21 +29,8 @@ import { z } from "zod";
 import { CustomInput } from "@/components/custom/CustomInput";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import useSWR, { Fetcher } from "swr";
 import { TypeCategoryModel } from "@/types/models";
-import {
-  CustomSelect,
-  CustomSelectContent,
-  CustomSelectItem,
-  CustomSelectTrigger,
-} from "@/components/custom/CustomSelect";
 import {
   Popover,
   PopoverContent,
@@ -53,26 +39,19 @@ import {
 import { Check, ChevronsUpDown } from "lucide-react";
 import {
   Command,
-  CommandDialog,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
-  CommandShortcut,
 } from "@/components/ui/command";
-import Image from "next/image";
+
 import { cn } from "@/lib/utils";
 
 export default function CategoryForm({ _id }: { _id?: string }) {
   // 1. Set state
   const [isLoading, setLoading] = useState(false);
   const [category, setData] = useState<CategoryFormData>();
-  const [openCategory, setOpenCategory] = React.useState(false);
-  const [openSubCategory, setOpenSubCategory] = React.useState(false);
-  const [openBrand, setOpenBrand] = React.useState(false);
-
   const router = useRouter();
   const { getToken, userId } = useAuth();
 
@@ -205,8 +184,9 @@ export default function CategoryForm({ _id }: { _id?: string }) {
           setLoading(false);
         });
     };
-    _id && getData();
-  }, [form.reset]);
+    if (_id) getData();
+
+  }, [_id, form, getToken, form.reset]);
 
   // 6. Define a submit handler.
   const onSubmit = async (values: z.infer<typeof categoryValidationSchema>) => {
@@ -393,7 +373,7 @@ export default function CategoryForm({ _id }: { _id?: string }) {
                                     </CommandEmpty>
                                     <CommandGroup>
                                       {categories.data &&
-                                        categories.data.map((category: any) => (
+                                        categories.data.map((category) => (
                                           <CommandItem
                                             value={category.name}
                                             key={category._id}

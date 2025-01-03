@@ -6,7 +6,7 @@ import { Brands } from "..";
 
 interface CellActionStatusProps {
   data: Brands;
-  mutate: Function;
+  mutate: () => void;
   status: string;
 }
 

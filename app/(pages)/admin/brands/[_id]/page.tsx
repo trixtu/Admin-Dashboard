@@ -2,7 +2,6 @@ import BreadcrumbTrx from "@/components/custom/Breadcrumb";
 import Container from "@/components/custom/Container";
 import Row from "@/components/custom/Row";
 import BrandForm from "@/components/models/admin/brands/BrandForm";
-import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import React from "react";
 
