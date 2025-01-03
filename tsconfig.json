@@ -21,6 +21,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+ "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/api/user/subscriptions/route.ts", "../orion_store/components/custom/Breadcrumbs.tsx"],
+  "exclude": ["node_modules", "components/ui/*"]
 }
