@@ -11,7 +11,6 @@ const schema = new Schema<TypeCategoryModel, CategoryModel>(
       type: String,
       required: true,
       maxLength: 255,
-      unique: true,
       lowercase: true,
     },
     description: {
@@ -35,11 +34,6 @@ const schema = new Schema<TypeCategoryModel, CategoryModel>(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
       default: null, // Null pentru categoriile principale
-    },
-    category: {
-      type: Schema.Types.ObjectId,
-      ref: "Category",
-      required: true,
     },
     status: {
       type: String,

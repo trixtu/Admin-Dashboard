@@ -1,5 +1,10 @@
-import { z, ZodType } from "zod";
-import { BrandFormData, CategoryFormData } from "./forms";
+import { string, z, ZodType } from "zod";
+import {
+  BrandFormData,
+  CategoryFormData,
+  OptionFormData,
+  ValueFormData,
+} from "./forms";
 import {
   descriptionFormat,
   nameFormat,
@@ -26,5 +31,23 @@ export const categoryValidationSchema: ZodType<CategoryFormData> = z.object({
   status: z.enum(["draft", "publish"]),
   user_id: z.string().optional().nullable(),
   parentId: z.string().optional().nullable(),
-  category: z.string().optional()
+});
+
+export const optionValidationSchema: ZodType<OptionFormData> = z.object({
+  name: z.string().min(1, "Name is required"),
+  productId: z.string().optional(),
+  isColor: z.boolean().default(false),
+  separateImages: z.boolean().default(false),
+  asFilters: z.boolean().default(false),
+  user_id: z.string().optional().nullable(),
+});
+
+export const valueOptionValidationSchema: ZodType<ValueFormData> = z.object({
+  value: z.string().min(1, "Value is required"),
+  additionalPrice: z
+    .number()
+    .nonnegative("Price cannot be negative")
+    .optional(),
+  metadata: z.record(z.any()).optional(),
+  optionId: z.string().regex(/^[a-fA-F0-9]{24}$/, "Invalid Option ID format"),
 });

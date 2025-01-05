@@ -47,7 +47,7 @@ export const CellActionStatus: React.FC<CellActionStatusProps> = ({
   return (
     <div className="lowercase">
       <Switch
-        checked={status === "publish"}
+        checked={status === "publish"} 
         onCheckedChange={handleStatusChange}
       />
     </div>

@@ -155,7 +155,6 @@ export default function Brands() {
           searchKey="name"
           columns={columns({ mutate })}
           data={data ? data : []}
-          mutate={mutate}
           onDeleteMany={handleDeleteMany}
           onActivateMany={handleActivateMany}
           onDeactivateMany={handleDeactivateMany}

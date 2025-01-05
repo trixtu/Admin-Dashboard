@@ -16,6 +16,8 @@ export function Header() {
         return "dashboard";
       case "/admin/product-categories":
         return "Product Categories";
+      case "/admin/options":
+        return "Product Options";
       default:
         return pathname.split("/")[2] || ""; // Extragem al doilea segment sau returnăm un string gol dacă nu există
     }

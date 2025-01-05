@@ -22,7 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 import { z } from "zod";
@@ -47,19 +47,22 @@ import {
 } from "@/components/ui/command";
 
 import { cn } from "@/lib/utils";
+import ImageUpload from "@/components/custom/ImageUpload";
 
 export default function CategoryForm({ _id }: { _id?: string }) {
   // 1. Set state
   const [isLoading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
   const [category, setData] = useState<CategoryFormData>();
   const router = useRouter();
   const { getToken, userId } = useAuth();
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   // fecthing categories
   const fetcher: Fetcher<TypeCategoryModel[], string> = async (url) => {
     const token = await getToken();
     return await axios
-      .get(url, {
+      .get(`${url}?parentId=null`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -74,6 +77,9 @@ export default function CategoryForm({ _id }: { _id?: string }) {
     process.env.NEXT_PUBLIC_API_URL + "/api/admin/categories",
     fetcher
   );
+
+  // Filtrarea categoriilor cu parentId === null
+const rootCategories = categories.data?.filter((category) => category.parentId === null);
 
   // 2. Form method
   async function postRequest(url: string, { arg }: { arg: CategoryFormData }) {
@@ -107,6 +113,7 @@ export default function CategoryForm({ _id }: { _id?: string }) {
         router.refresh();
       });
   }
+
   async function putRequest(url: string, { arg }: { arg: CategoryFormData }) {
     const token = await getToken();
     return await axios
@@ -185,7 +192,6 @@ export default function CategoryForm({ _id }: { _id?: string }) {
         });
     };
     if (_id) getData();
-
   }, [_id, form, getToken, form.reset]);
 
   // 6. Define a submit handler.
@@ -199,6 +205,7 @@ export default function CategoryForm({ _id }: { _id?: string }) {
       status: values.status,
       user_id: userId,
     };
+
     if (category) {
       await update(data);
     } else {
@@ -207,9 +214,9 @@ export default function CategoryForm({ _id }: { _id?: string }) {
   };
 
   // 7. Update slug
-  const createSlug = (value: string) => {
-    const val = slugString(value);
-    form.setValue("slug", val);
+  const createSlug = async (value: string) => {
+    const val = slugString(value); // Generează slug-ul din valoarea originală
+    form.setValue("slug", val); // Setează valoarea slug-ului în formular
   };
 
   return (
@@ -334,79 +341,120 @@ export default function CategoryForm({ _id }: { _id?: string }) {
                     <Separator className="my-6" />
                     <FormField
                       control={form.control}
-                      name="category"
+                      name="parentId"
                       render={({ field }) => (
                         <FormItem className="flex flex-col">
-                          <FormLabel>Category</FormLabel>
-                          <Popover>
+                          <FormLabel>Parent Category</FormLabel>
+                          <Popover open={open} onOpenChange={setOpen}>
                             <PopoverTrigger asChild>
                               <FormControl>
                                 <Button
                                   variant="outline"
-                                  role="combobox"
                                   disabled={categories.data ? false : true}
+                                  ref={buttonRef}
                                   className={cn(
-                                    "w-sm md:w-md lg:w-lg justify-between",
-                                    !field.value && "text-muted-foreground"
+                                    "w-sm md:w-md lg:w-lg justify-between bg-bgInput text-textColor",
+                                    !field.value && "text-textColor"
                                   )}
                                 >
                                   {field.value
                                     ? categories.data?.find(
                                         (category) =>
-                                          category.name === field.value
+                                          category._id === field.value
                                       )?.name
-                                    : "Select language"}
+                                    : "Select Parent Category"}
                                   <ChevronsUpDown className="opacity-50" />
                                 </Button>
                               </FormControl>
                             </PopoverTrigger>
-                            <div className="w-full">
-                              <PopoverContent className="w-sm md:w-md lg:w-lg p-0 bg-white">
-                                <Command>
-                                  <CommandInput
-                                    placeholder="Search framework..."
-                                    className="h-9"
-                                  />
-                                  <CommandList>
-                                    <CommandEmpty>
-                                      No framework found.
-                                    </CommandEmpty>
-                                    <CommandGroup>
-                                      {categories.data &&
-                                        categories.data.map((category) => (
-                                          <CommandItem
-                                            value={category.name}
-                                            key={category._id}
-                                            onSelect={() => {
-                                              form.setValue(
-                                                "category",
-                                                category.name
-                                              );
-                                            }}
-                                          >
-                                            {category.name}
-                                            <Check
-                                              className={cn(
-                                                "ml-auto",
-                                                category.name === field.value
-                                                  ? "opacity-100"
-                                                  : "opacity-0"
-                                              )}
-                                            />
-                                          </CommandItem>
-                                        ))}
-                                    </CommandGroup>
-                                  </CommandList>
-                                </Command>
-                              </PopoverContent>
-                            </div>
-                          </Popover>
+                            <PopoverContent
+                              className="p-0 bg-white rounded-[1px]"
+                              style={{
+                                width: buttonRef.current
+                                  ? `${buttonRef.current.offsetWidth}px`
+                                  : "auto",
+                              }}
+                            >
+                              <Command>
+                                <CommandInput
+                                  placeholder="Search category..."
+                                  className="h-9"
+                                />
+                                <CommandList>
+                                  <CommandEmpty>No category found</CommandEmpty>
+                                  <CommandGroup>
+                                    {rootCategories &&
+                                      rootCategories.map((category) => (
+                                        <CommandItem
+                                          value={category.name} // Setăm value la name pentru afișare
+                                          key={category._id}
+                                          onSelect={() => {
+                                            // Setăm _id-ul în formularul hidden
+                                            form.setValue(
+                                              "parentId",
+                                              category._id
+                                            );
+                                          }}
+                                        >
+                                          {category.name}{" "}
+                                          {/* Afișăm numele categoriei */}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              category._id ===
+                                                form.getValues("parentId")
+                                                ? "opacity-100"
+                                                : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                  </CommandGroup>
+                                </CommandList>
+                              </Command>
 
+                              {/* Input hidden pentru a stoca _id-ul categoriei */}
+                              <input
+                                type="hidden"
+                                readOnly
+                                name="parentId"
+                                value={form.getValues("parentId") || ""} // Setăm valoarea _id în hidden
+                              />
+                            </PopoverContent>
+                          </Popover>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
                   </Fragment>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Logo image</CardTitle>
+                </CardHeader>
+                <Separator />
+                <CardContent>
+                  <FormField
+                    control={form.control}
+                    name="image"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <ImageUpload
+                            value={field.value}
+                            disabled={isCreating}
+                            onChange={(url) => {
+                              field.onChange(url);
+                            }}
+                            onRemove={() => field.onChange("")}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </CardContent>
               </Card>
             </div>

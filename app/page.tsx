@@ -23,7 +23,6 @@ export default async function Home() {
     .execute();
   
     
-    console.log(resources)
   return (
     <main className="container">
       <ul className="grid gap-12 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">

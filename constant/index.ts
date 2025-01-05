@@ -52,6 +52,10 @@ export const siderbarData = {
           title: "Brands",
           url: "/admin/brands",
         },
+        {
+          title: "Product Options",
+          url: "/admin/options",
+        },
       ],
     },
     {

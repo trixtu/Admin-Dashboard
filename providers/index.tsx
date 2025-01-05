@@ -3,6 +3,7 @@ import * as React from "react";
 import ToasterProvider from "./ToastProvider";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "./ThemeProvider";
+import TooltipProviderTrx from "./TooltipProvider";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -28,7 +29,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
         disableTransitionOnChange
       >
         <ToasterProvider />
-        {children}
+        <TooltipProviderTrx>{children}</TooltipProviderTrx>
       </ThemeProvider>
     </ClerkProvider>
   );

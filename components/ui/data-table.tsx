@@ -31,7 +31,6 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   searchKey: string;
-  mutate: () => void;
   onDeleteMany?: (selectedRows: TData[]) => void;
   onActivateMany?: (selectedRows: TData[]) => void;
   onDeactivateMany?: (selectedRows: TData[]) => void;
@@ -99,6 +98,7 @@ export function DataTable<TData, TValue>({
       await onActivateMany(selectedOriginal);
     }
   };
+
   const deactivateMany = async () => {
     if (onDeactivateMany) {
       await onDeactivateMany(selectedOriginal);
@@ -119,50 +119,59 @@ export function DataTable<TData, TValue>({
         />
         <div className="card-toolbar lg:ml-20 items-center">
           <ul className="flex gap-2">
-            <Button
-              variant={"outline"}
-              className={cn(
-                "btn btn-icon ",
-                selectedRowModel.length > 0
-                  ? "btn-outline-brand"
-                  : "btn-outline-gray"
-              )}
-              disabled={selectedRowModel.length > 0 ? false : true}
-              onClick={activateMany}
-            >
-              <ToggleLeft className="hidden md:block" />
-              Activate
-            </Button>
-            <Button
-              variant={"outline"}
-              className={cn(
-                "btn btn-icon ",
-                selectedRowModel.length > 0
-                  ? "btn-outline-brand"
-                  : "btn-outline-gray"
-              )}
-              disabled={selectedRowModel.length > 0 ? false : true}
-              onClick={deactivateMany}
-            >
-              <ToggleLeft className="hidden md:block" />
-              Deactivate
-            </Button>
-            <Button
-              variant={"outline"}
-              className={cn(
-                "btn btn-icon ",
-                selectedRowModel.length > 0
-                  ? "btn-outline-brand"
-                  : "btn-outline-gray"
-              )}
-              disabled={selectedRowModel.length > 0 ? false : true}
-              onClick={() => {
-                setOpen(true);
-              }}
-            >
-              <ToggleLeft className="hidden md:block" />
-              Delete
-            </Button>
+            {onActivateMany && (
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "btn btn-icon ",
+                  selectedRowModel.length > 0
+                    ? "btn-outline-brand"
+                    : "btn-outline-gray"
+                )}
+                disabled={selectedRowModel.length > 0 ? false : true}
+                onClick={activateMany}
+              >
+                <ToggleLeft className="hidden md:block" />
+                Activate
+              </Button>
+            )}
+
+            {onDeactivateMany && (
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "btn btn-icon ",
+                  selectedRowModel.length > 0
+                    ? "btn-outline-brand"
+                    : "btn-outline-gray"
+                )}
+                disabled={selectedRowModel.length > 0 ? false : true}
+                onClick={deactivateMany}
+              >
+                <ToggleLeft className="hidden md:block" />
+                Deactivate
+              </Button>
+            )}
+
+            {onDeleteMany && (
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "btn btn-icon ",
+                  selectedRowModel.length > 0
+                    ? "btn-outline-brand"
+                    : "btn-outline-gray"
+                )}
+                disabled={selectedRowModel.length > 0 ? false : true}
+                onClick={() => {
+                  setOpen(true);
+                }}
+              >
+                <ToggleLeft className="hidden md:block" />
+                Delete
+              </Button>
+            )}
+
             <Alert
               setOpenAlert={setOpen}
               openAlert={open}

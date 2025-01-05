@@ -63,7 +63,7 @@ export async function POST(request: Request) {
 }
 
 export async function PUT(req: Request) {
-  await dbConnect();
+  await dbConnect(); 
 
   const body = await req.json();
   const { searchParams } = new URL(req.url);
@@ -196,7 +196,7 @@ export async function DELETE(req: Request) {
   await dbConnect();
   const body = await req.json();
   const { searchParams } = new URL(req.url);
-  const method = searchParams.get("method");
+  const method = searchParams.get("method"); 
 
   if (method === "deleteMany") {
     try {
@@ -238,81 +238,5 @@ export async function DELETE(req: Request) {
       console.error("Error deleting brand:", error);
     }
   }
-
-  // try {
-  //   const _id = searchParams.get("_id");
-  //   if (!_id) {
-  //     return NextResponse.json(
-  //       { message: "Missing '_id' parameter." },
-  //       { status: 400 }
-  //     );
-  //   }
-  //   const deletedBrand = await Brand.findByIdAndDelete(_id);
-
-  //   return new NextResponse("Brand deleted", {
-  //     headers: {
-  //       "Cache-Control": "no-store",
-  //     },
-  //     status: 200,
-  //   });
-  // } catch (error) {
-  //   console.error("Error deleting brand:", error);
-  //   return NextResponse.json(
-  //     {
-  //       message: "An error occurred while deleting the brand.",
-  //       error: error,
-  //     },
-  //     { status: 500 }
-  //   );
-  // }
-
-  // try {
-  //   if (method === "deleteMany") {
-  //     const _ids = body._ids;
-
-  //     if (_ids) {
-  //       const deleted = await Brand.deleteMany({ _id: { $in: _ids } });
-
-  //       return NextResponse.json(
-  //         { message: "Deleted successfully", count: deleted.deletedCount },
-  //         { status: 200 }
-  //       );
-  //     }
-  //   }
-  //   const _id = searchParams.get("_id");
-
-  //   if (!_id) {
-  //     return NextResponse.json(
-  //       { message: "Missing '_id' parameter." },
-  //       { status: 400 }
-  //     );
-  //   }
-
-  //   const deletedBrand = await Brand.findByIdAndDelete(_id);
-
-  //   if (!deletedBrand) {
-  //     return NextResponse.json(
-  //       { message: "Brand not found." },
-  //       { status: 404 }
-  //     );
-  //   }
-
-  //   revalidatePath("/admin/brands");
-
-  //   return new NextResponse("Brand deleted", {
-  //     headers: {
-  //       "Cache-Control": "no-store",
-  //     },
-  //     status: 200,
-  //   });
-  // } catch (error: any) {
-  //   console.error("Error deleting brand:", error.message);
-  //   return NextResponse.json(
-  //     {
-  //       message: "An error occurred while deleting the brand.",
-  //       error: error.message,
-  //     },
-  //     { status: 500 }
-  //   );
-  // }
+  
 }
